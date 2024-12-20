@@ -104,61 +104,68 @@ const onSubmit = form.handleSubmit(
       </swiper>
     </div>
 
-    <!-- Login Field -->
-
+    <!-- ===================== SIGNUP ===================== -->
     <div class="h-96 py-5 px-5 w-80 max-w-80">
-      <form @submit="onSubmit" class="h-80">
+      <div class="text-black font-bold text-3xl mb-5">Login</div>
+      <form @submit.prevent="onSubmit" class="h-40 flex flex-col gap-2">
+        <!-- ============= Username FormField ============= -->
+
         <FormField v-slot="{ componentField }" name="username">
-          <FormItem class="flex flex-col gap-2">
-            <FormLabel class="text-black font-bold text-3xl">Login</FormLabel>
-            <div class="flex flex-col gap-1">
-              <FormLabel class="text-black font-bold text-base"
-                >Username</FormLabel
-              >
-              <FormControl class="flex">
-                <Input
-                  type="text"
-                  placeholder="username"
-                  v-model="form.values.username"
-                  class="border-1px border-black px-1 py-1 rounded-2px"
-                  ref="username"
-                />
-              </FormControl>
-            </div>
-            <div class="flex flex-col gap-">
-              <FormLabel class="text-black font-bold text-base"
-                >Password</FormLabel
-              >
-              <FormControl class="flex">
-                <Input
-                  type="text"
-                  placeholder="password"
-                  v-model="form.values.password"
-                  class="border-1px border-black px-1 py-1 rounded-2px"
-                  ref="password"
-                />
-              </FormControl>
-            </div>
+          <FormItem>
+            <FormLabel class="text-black font-bold text-base"
+              >Username</FormLabel
+            >
+
+            <FormControl class="flex">
+              <Input
+                type="text"
+                placeholder="Username"
+                v-model="username"
+                class="border-1px border-black px-1 py-1 rounded-2px w-full"
+                ref="username"
+              />
+              <ErrorMessage name="username" />
+            </FormControl>
           </FormItem>
         </FormField>
-        <div class="flex mt-5 items-center justify-between">
-          <Button type="submit">Submit </Button>
-          <div>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Login" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup class="flex flex-col gap-2">
-                  <RouterLink to="/Login">Buyer Login</RouterLink>
 
-                  <RouterLink to="/seller">Seller Login</RouterLink>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+        <!-- ============= Password FormField ============= -->
+
+        <FormField name="password">
+          <FormItem>
+            <FormLabel class="text-black font-bold text-base"
+              >Password</FormLabel
+            >
+            <FormControl class="flex">
+              <Input
+                v-model="password"
+                type="password"
+                placeholder="Password"
+                class="border-1px border-black px-1 py-1 rounded-2px w-full"
+              />
+            </FormControl>
+          </FormItem>
+        </FormField>
+      </form>
+      <!-- ============== Router Link ===============  -->
+
+      <div class="flex flex-col gap-6">
+        <div class="flex items-center gap-10">
+          <Button>Button</Button>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Login page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup class="flex flex-col gap-2">
+                <RouterLink to="/Login">Buyer Login</RouterLink>
+
+                <RouterLink to="/seller">Seller Login</RouterLink>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
-        <div class="flex flex-col items-center justify-center h-28">
+        <div class="flex flex-col items-center">
           <RouterLink to="/forgotpassword">
             <span
               class="hover:underline hover:cursor-pointer hover:text-sky-500 text-0.7rem font-bold"
@@ -168,11 +175,11 @@ const onSubmit = form.handleSubmit(
           <RouterLink to="/Signup"
             ><span
               class="hover:underline hover:cursor-pointer hover:text-sky-500 text-0.7rem font-bold"
-              >Do not have an account?</span
+              >Don't have an account?</span
             ></RouterLink
           >
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>

@@ -3,5 +3,7 @@ import Home from "../components/Home.vue";
 </script>
 
 <template>
-  <div><Home /></div>
+  <div>
+    <Home />
+  </div>
 </template>
