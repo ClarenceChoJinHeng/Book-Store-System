@@ -1,5 +1,5 @@
 <template>
-  <!-- <section class="bg-white py-8">
+  <section class="bg-white py-8">
       <div class="container py-8 px-6 mx-auto">
         <a
           class="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl mb-8"
@@ -49,5 +49,5 @@
           fringilla. Vitae congue eu consequat ac.
         </p>
       </div>
-    </section> -->
+    </section>
 </template>

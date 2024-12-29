@@ -38,8 +38,8 @@ module.exports = {
       },
       height: {
         ch80vh: "80vh",
+        ch70vh: "70vh",
         ch100vh: "100vh",
-
       },
       borderWidth: {
         "1px": "1px",

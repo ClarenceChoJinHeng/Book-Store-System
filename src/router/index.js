@@ -13,15 +13,17 @@ const router = createRouter({
       meta: {
         title: "The Book - Home",
         hideFooter: false,
+        requiresAuth: true,
       },
     },
     {
       path: "/login",
       name: "Login",
       component: LoginView,
-      meta: { 
+      meta: {
         title: "The Book - Login",
         hideFooter: true,
+        requiresAuth: true,
       },
     },
     {
