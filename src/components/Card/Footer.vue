@@ -5,7 +5,7 @@ import IconPinterest from "../icons/IconPinterest.vue";
 </script>
 
 <template>
-  <footer class="container mx-auto bg-white py-8 border-t border-gray-400">
+  <footer class=" bg-white py-8 border-t border-gray-400 w-full mx-0 flex">
     <div class="container flex px-3 py-8">
       <div class="w-full mx-auto flex flex-wrap">
         <div class="flex w-full lg:w-1/2">

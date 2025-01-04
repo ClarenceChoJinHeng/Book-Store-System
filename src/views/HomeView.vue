@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Navbar from "../components/Card/Navbar.vue";
-import Store from "../components/Card/Store.vue";
+import Store from "@/components/Card/Store.vue";
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from "swiper/vue";
 
@@ -52,6 +51,7 @@ const modules = [Pagination, Autoplay];
     </div>
 
     <!-- Store Section -->
+
     <Store />
   </body>
 </template>

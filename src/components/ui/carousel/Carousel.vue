@@ -38,7 +38,7 @@ function onKeyDown(event: KeyboardEvent) {
   }
 }
 </script>
-
+ 
 <template>
   <div
     :class="cn('relative', props.class)"

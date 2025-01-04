@@ -4,7 +4,9 @@ import IconBook from "../icons/IconBook.vue";
 import IconUser from "../icons/IconUser.vue";
 import { useUserStore } from "@/stores/user.ts";
 import { Button } from "@/components/ui/button";
-const userStore = useUserStore();
+import { useAuthStore } from "@/stores/authStore.ts";
+const authStore = useAuthStore();
+const route = useRoute();
 </script>
 
 <template>
@@ -40,24 +42,27 @@ const userStore = useUserStore();
             class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0"
           >
             <li>
-              <a
+              <RouterLink
+                to="/"
                 class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
-                href="#"
-                >Shop</a
+                >Home</RouterLink
               >
             </li>
             <li>
-              <a
+              <RouterLink
+                to="/Book"
                 class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
-                href="#"
-                >About</a
+                >Shop</RouterLink
               >
             </li>
-            <RouterLink
-              to="/"
-              class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
-              >Home</RouterLink
-            >
+            <li>
+              <RouterLink
+                to="/About"
+                class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
+                href="#"
+                >About</RouterLink
+              >
+            </li>
           </ul>
         </nav>
       </div>
@@ -76,14 +81,21 @@ const userStore = useUserStore();
       </div>
 
       <div class="order-2 md:order-3 flex items-center" id="nav-content">
-        <a class="inline-block no-underline hover:text-black" href="#">
-          <div v-if="userStore.isLoggedIn">
-            <IconUser />
+        <div class="inline-block no-underline hover:text-black" href="#">
+          <div
+            v-if="authStore.isAuthenticated"
+            class="flex flex-col items-center"
+          >
+            <RouterLink to="/Profile"> <IconUser /></RouterLink>
           </div>
-          <RouterLink v-else to="/Login">
-            <Button class="inline-block no-underline"> Login </Button>
-          </RouterLink>
-        </a>
+          <div v-else>
+            <RouterLink :to="route.path === '/Login' ? '/Signup' : '/Login'">
+              <Button class="inline-block no-underline">
+                {{ route.path === "/Login" ? "Signup" : "Login" }}
+              </Button>
+            </RouterLink>
+          </div>
+        </div>
 
         <a class="pl-3 inline-block no-underline hover:text-black" href="#">
           <svg
