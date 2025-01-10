@@ -10,13 +10,16 @@ import AuthorView from "@/views/admin/authors/AuthorView.vue";
 import BookManagement from "@/views/admin/books/BookView.vue";
 import UsersManagement from "@/views/admin/UsersView.vue";
 import AddBookView from "@/views/admin/books/AddBookView.vue";
+import AddAuthorView from "@/views/admin/authors/AddAuthorView.vue";
+import EditAuthorView from "@/views/admin/authors/EditAuthorView.vue";
+import EditBookView from "@/views/admin/books/EditBookView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "home",
+      name: "Home",
       component: HomeView,
       meta: {
         title: "The Book - Home",
@@ -109,7 +112,19 @@ const router = createRouter({
       },
     },
     {
-      path: "/admin/author",
+      path: "/admin/book/book-manage",
+      name: "Library",
+      component: BookManagement,
+      meta: {
+        title: "The Book [Admin] - Book Management",
+        hideAdmin: true,
+        hideHeader: true,
+        hideFooter: true,
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/admin/author/author-manage",
       name: "Author",
       component: AuthorView,
       meta: {
@@ -121,20 +136,8 @@ const router = createRouter({
       },
     },
     {
-      path: "/admin/book-manage",
-      name: "/admin/Library",
-      component: BookManagement,
-      meta: {
-        title: "The Book [Admin] - Book Management",
-        hideAdmin: true,
-        hideHeader: true,
-        hideFooter: true,
-        requiresAuth: true,
-      },
-    },
-    {
-      path: "/admin/users",
-      name: "/admind/Users",
+      path: "/admin/users-manage",
+      name: "Users",
       component: UsersManagement,
       meta: {
         title: "The Book [Admin] - User Management",
@@ -145,11 +148,47 @@ const router = createRouter({
       },
     },
     {
-      path: "/admin/addbook",
-      name: "/admin/AddBook",
+      path: "/admin/book/add-book",
+      name: "Add Book",
       component: AddBookView,
       meta: {
         title: "The Book [Admin] - Add Book",
+        hideAdmin: true,
+        hideHeader: true,
+        hideFooter: true,
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/admin/book/edit-book/:id",
+      name: "Edit Book",
+      component: EditBookView,
+      meta: {
+        title: "The Book [Admin] - Edit Book",
+        hideAdmin: true,
+        hideHeader: true,
+        hideFooter: true,
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/admin/author/add-author",
+      name: "Add Author",
+      component: AddAuthorView,
+      meta: {
+        title: "The Book [Admin] - Add Author",
+        hideAdmin: true,
+        hideHeader: true,
+        hideFooter: true,
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/admin/author/edit-author/:id",
+      name: "Edit Author",
+      component: EditAuthorView,
+      meta: {
+        title: "The Book [Admin] - Edit Author",
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,

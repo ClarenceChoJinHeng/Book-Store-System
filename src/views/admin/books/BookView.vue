@@ -4,14 +4,16 @@ import { MagnifyingGlassIcon } from "@radix-icons/vue";
 import { Button } from "@/components/ui/button";
 
 import { RouterLink } from "vue-router";
+
+import BookTable from "@/components/Card/BookTable.vue";
 </script>
 
 <template>
   <div
-    class="flex flex-col gap-4 border-2 h-full py-5 shadow-2xl bg-slate-100 rounded-md"
+    class="flex flex-col gap-4 border-2 h-max py-5 shadow-md bg-slate-100 rounded-md"
   >
     <!-- Book List -->
-    <div class="container flex items-center justify-between">
+    <div class="px-4 flex items-center justify-between w-full">
       <div class="relative w-full max-w-sm items-center">
         <Input id="search" type="text" placeholder="Search..." class="pl-10" />
         <span
@@ -24,18 +26,19 @@ import { RouterLink } from "vue-router";
         <!-- ================== Button ================== -->
         <div class="">
           <div>
-            <Button variant="green"
-              ><RouterLink to="/admin/AddBook">Add Book</RouterLink>
-            </Button>
+            <RouterLink to="/admin/book/add-book"
+              ><Button variant="green">Add Book </Button></RouterLink
+            >
           </div>
         </div>
-        <Button variant="red">Delete Book </Button>
       </div>
     </div>
 
     <!-- =========== DISPLAY EXISTING BOOKS ========== -->
-    <div class="flex items-center justify-center h-ch80vh w-full">
-      <div class="h-full w-full"></div>
+    <div class="flex items-center h-max w-full">
+      <div class="h-full w-full">
+        <BookTable />
+      </div>
     </div>
   </div>
 </template>

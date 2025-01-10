@@ -9,14 +9,6 @@ const { toast } = useToast();
 
 // Routing pages
 import { RouterLink } from "vue-router";
-import router from "@/router";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // Front-end data send to backend
 import axios from "axios";
@@ -32,11 +24,9 @@ const modules = [Pagination, Autoplay];
 // Import for input field form
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 
 import { useAuthStore } from "../stores/authStore.ts";

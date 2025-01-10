@@ -1,216 +1,293 @@
 import { defineStore } from "pinia";
 import { useToast } from "@/components/ui/toast/use-toast";
-
+import axios from "axios";
+import { CounterClockwiseClockIcon } from "@radix-icons/vue";
+import { ErrorMessage } from "vee-validate";
 const { toast } = useToast();
+import router from "../router";
 
 export const bookStore = defineStore("bookStore", {
   state: () => ({
-    books: [],
+    books: [] as any[],
+    book: [] as any[],
   }),
 
   actions: {
-    async addBooks(formData: FormData) {
+    async addBooks(
+      isbn: string,
+      title: string,
+      author: string,
+      publisher: string,
+      publicationDate: string,
+      edition: string,
+      language: string,
+      genre: string,
+      category: string,
+      stockQuantity: number,
+      price: number,
+      description: string,
+      ratingsReview: string,
+      status: string,
+      bookImage: string
+    ) {
       try {
-        const book = {
-          title: formData.get("title") as string,
-          price: formData.get("price") as number,
-          quantity: formData.get("quantity") as string,
-          category: formData.get("category") as string,
-          author: formData.get("author") as string,
-          imageUrl: formData.get("imageUrl") as string,
+        const isbnRegex = /^\d{10,13}$/;
+        if (
+          isbn === "" ||
+          title === "" ||
+          author === "" ||
+          publisher === "" ||
+          publicationDate === "" ||
+          edition === "" ||
+          language === "" ||
+          genre === "" ||
+          category === "" ||
+          stockQuantity === null ||
+          price === null ||
+          description === "" ||
+          ratingsReview === "" ||
+          status === "" ||
+          bookImage === ""
+        ) {
+          toast({
+            title: "Empty Form!!",
+            description: "Form must not be empty!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (isNaN(stockQuantity) || isNaN(price)) {
+          toast({
+            title: "Input must be numeric!!",
+            description: "Stock Quantity or Price must be numeric!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!Number.isInteger(stockQuantity)) {
+          toast({
+            title: "Stock Quantity cannot be decimals!!",
+            description: "Ensure stock quantity is integer!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const priceRegex = /^\d+(\.\d{1,2})?$/;
+        if (!priceRegex.test(price.toString())) {
+          toast({
+            title: "Price format error!!",
+            description:
+              "Price must be a number with up to two decimal places!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!isbnRegex.test(isbn)) {
+          toast({
+            title: "ISBN format error!!",
+            description: "ISBN must be 10 to 13 numeric digits only!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const form = {
+          isbn: isbn,
+          title: title,
+          author: author,
+          publisher: publisher,
+          publicationDate: publicationDate,
+          edition: edition,
+          language: language,
+          genre: genre,
+          category: category,
+          stockQuantity: stockQuantity,
+          price: price,
+          description: description,
+          ratingsReview: ratingsReview,
+          status: status,
+          bookImage: bookImage,
         };
-        this.books.push(book);
-        console.log("Book added:", book);
-      } catch (error) {
-        console.error("Error adding book:", error);
+        const response = await axios.post("http://127.0.0.1:8000/api/addBook", {
+          ...form,
+        });
+
+        if (response) {
+          toast({
+            title: "Book Added Succesfully",
+            description: "Enjoy adding new books",
+          });
+        }
+        await this.getBook();
+        router.push("/admin/book/book-manage");
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.errors) {
+          console.error("An Error has Occured", err);
+          Object.entries(err.response.data.errors).forEach(
+            ([errorName, errorMessage]) => {
+              toast({
+                title: `${errorName}`,
+                description: `${errorMessage}`,
+                variant: "destructive",
+              });
+            }
+          );
+        }
+      }
+    },
+
+    async getBook() {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/getBook");
+        this.books = response.data;
+        console.log(this.books);
+
+        console.log("Succes retrieve", response.data);
+      } catch (err) {
+        console.error("Error in retrieving", err);
+      }
+    },
+
+    async getBookById(id: number) {
+      try {
+        console.log(id);
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/getBookById/${id}`
+        );
+
+        console.log("Fetch single book successfull", response.data);
+
+        this.book = response.data;
+
+        return true;
+      } catch (err) {
+        console.error("Fetch single book unsuccesfull", err);
+      }
+    },
+
+    async editBooks(
+      id: number,
+      isbn: string,
+      title: string,
+      author: string,
+      publisher: string,
+      publicationDate: string,
+      edition: string,
+      language: string,
+      genre: string,
+      category: string,
+      stockQuantity: number,
+      price: number,
+      description: string,
+      ratingsReview: string,
+      status: string,
+      bookImage: string
+    ) {
+      try {
+        const isbnRegex = /^\d{10,13}$/;
+        if (
+          isbn === "" ||
+          title === "" ||
+          author === "" ||
+          publisher === "" ||
+          publicationDate === "" ||
+          edition === "" ||
+          language === "" ||
+          genre === "" ||
+          category === "" ||
+          stockQuantity === null ||
+          price === null ||
+          description === "" ||
+          ratingsReview === "" ||
+          status === "" ||
+          bookImage === ""
+        ) {
+          toast({
+            title: "Empty Form!!",
+            description: "Form must not be empty!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // if (!isbnRegex.test(isbn)) {
+        //   toast({
+        //     title: "ISBN format error!!",
+        //     description: "ISBN must be 10 to 13 numeric digits only!",
+        //     variant: "destructive",
+        //   });
+        //   return;
+        // }
+
+        const form = {
+          isbn: isbn,
+          title: title,
+          author: author,
+          publisher: publisher,
+          publicationDate: publicationDate,
+          edition: edition,
+          language: language,
+          genre: genre,
+          category: category,
+          stockQuantity: stockQuantity,
+          price: price,
+          description: description,
+          ratingsReview: ratingsReview,
+          status: status,
+          bookImage: bookImage,
+        };
+        const response = await axios.put(
+          `http://127.0.0.1:8000/api/editBook/${id}`,
+          {
+            ...form,
+          }
+        );
+
+        if (response) {
+          toast({
+            title: "Book Updated Added Succesfully",
+            description: "Enjoy Updating your books",
+          });
+          return;
+        }
+        router.push("/admin/book/book-manage
+        await this.getBook();
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.errors) {
+          console.error("An Error has Occured", err);
+          Object.entries(err.response.data.errors).forEach(
+            ([errorName, errorMessage]) => {
+              toast({
+                title: `${errorName}`,
+                description: `${errorMessage}`,
+                variant: "destructive",
+              });
+            }
+          );
+        }
+      }
+    },
+
+    async deleteBook(id: number) {
+      try {
+        console.log(id);
+        const response = await axios.delete(
+          `http://127.0.0.1:8000/api/deleteBook/${id}`
+        );
+
+        toast({
+          title: "Successfully Deleted!",
+          description: "Author has been deleted",
+        });
+
+        await this.getBook();
+      } catch (err) {
+        console.error("Unexpected error", err);
       }
     },
   },
 });
-
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/1prideandprejudice.jpg",
-//   title: "Pride and Prejudice",
-//   author: "By Jane Austen",
-//   price: "RM9.99",
-//   categories: "Romance",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/2A-Clockwork-Orange-Book-Cover-368x600-1.jpg",
-//   title: "A Clockwork Orange",
-//   author: "By Anthony Burgess",
-//   price: "RM12.99",
-//   categories: "Science Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/3px-The_Grapes_of_Wrath_1939_1st_ed_cover.jpg",
-//   title: "The Grapes of Wrath",
-//   author: "By John Steinbeck",
-//   price: "RM11.99",
-//   categories: "Historical Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/4american-psycho-670x1024-1.jpg",
-//   title: "American Psycho",
-//   author: "By Bret Easton Ellis",
-//   price: "RM12.99",
-//   categories: "Dark Satire",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/5bravenewworld.jpg",
-//   title: "Brave New World2",
-//   author: "By Aldous Huxley",
-//   price: "RM13.99",
-//   categories: "Science Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/6Animorphs.jpg",
-//   title: "Animorphs – The Stranger",
-//   author: "By K. A. Applegate",
-//   price: "RM12.99",
-//   categories: "Children's Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/7F451.jpg",
-//   title: "Fahrenheit 451",
-//   author: "By Ray Bradbury",
-//   price: "RM10.99",
-//   categories: "Science Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/8engulfedinflames.jpg",
-//   title: "When You Are Engulfed in Flames",
-//   author: "By David Sedaris",
-//   price: "RM12.99",
-//   categories: "Literary Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/9Faceofangel.jpg",
-//   title: "Face of an Angel",
-//   author: "By Dorothy Eden",
-//   price: "RM15.99",
-//   categories: "Psychological Thriller, Mystery",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/10The-Catcher-in-the-Rye-First-Edition-cover-E.-Michael-Mitchell.jpg",
-//   title: "The Catcher in the Rye",
-//   author: "By J. D. Salinger",
-//   price: "RM10.99",
-//   categories: "Bildungsroman, Coming-of-Age",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/11The-Divine-Comedy-Book-Cover-400x600-1.jpg",
-//   title: "The Divine Comedy",
-//   author: "By Dante Alighieri",
-//   price: "RM12.99",
-//   categories: "Epic Poetry",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/12psycho.jpg",
-//   title: "Psycho",
-//   author: "By Robert Bloch",
-//   price: "RM10.99",
-//   categories: "Psychological Thriller",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/13frankenstein.jpg",
-//   title: "Frankenstein",
-//   author: "By Mary Shelley",
-//   price: "RM21.99",
-//   categories: "Gothic Fiction",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/14The-Great-Gatsby-Book-Cover-391x600-1.jpg",
-//   title: "The Great Gatsby",
-//   author: "By F. Scott Fitzgerald",
-//   price: "RM11.99",
-//   categories: "Social Commentary, Classic Literature",
-// },
-// {
-//   imageUrl:
-//     "https://www.papertrue.com/blog/wp-content/uploads/2023/11/15psychopathtest.jpg",
-//   title: "The Psychopath Test: A Journey Through the Madness Industry",
-//   author: "By Jon Ronson",
-//   price: "RM12.69",
-//   categories: "Non-Fiction, Psychology",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/81-X60ARMYL._AC_UY327_QL65_.jpg",
-//   title: "The Notebook",
-//   author: "by Nicholas Sparks",
-//   price: "RM12.00",
-//   categories: "Contemporary Romance",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/71QDhHvv7wL._AC_UY327_QL65_.jpg",
-//   title: "The Love Hypothesis",
-//   author: " by Ali Hazelwood",
-//   price: "RM10.00",
-//   categories: "Academic Romance, Contemporary Romance",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/91cFp90gwZL._AC_UY327_QL65_.jpg",
-//   title: "The Duke and I",
-//   author: "by Julia Quinn",
-//   price: "RM20.55",
-//   categories: "Regency Romance, Historical Romance",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/91CqNElQaKL._AC_UY327_QL65_.jpg",
-//   title: "It Ends with Us",
-//   author: " by Colleen Hoover",
-//   price: "RM24.00",
-//   categories: "Regency Romance, Emotional Romance",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/71IszuvUCEL._AC_UY327_QL65_.jpg",
-//   title: "Me Before You",
-//   author: "by Jojo Moyes",
-//   price: "RM22.00",
-//   categories: "Contemporary Romance, Tearjerker",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/81jQrSTUhSL._AC_UY327_QL65_.jpg",
-//   title: "The Kiss Quotient",
-//   author: "by Helen Hoang",
-//   price: "RM21.00",
-//   categories: "Contemporary Romance, Neurodiversity Romance",
-// },
-// {
-//   imageUrl:
-//     "https://m.media-amazon.com/images/I/81RrEEMiOCL._AC_UY327_QL65_.jpg",
-//   title: "A Court of Thorns and Roses",
-//   author: " by Sarah J. Maas",
-//   price: "RM23.00",
-//   categories: "Fantasy Romance, Paranormal Romance",
-// },
-
-// getters: {
-//   filteredBooks: (state) => {
-//     return state.books.filter(
-//       (book) =>
-//         book.categories.includes("Romance") ||
-//         book.categories.includes("Historical Fiction")
-//     );
-//   },
-// },

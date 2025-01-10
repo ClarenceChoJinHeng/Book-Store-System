@@ -96,15 +96,24 @@ export const useAuthStore = defineStore("auth", {
       } catch (err) {
         // Object Entries allow to display dynamic error message
         console.log(err);
-        Object.entries(err.response.data.errors).forEach(
-          ([errorName, errorMessage]) => {
-            toast({
-              title: "Signup Failed!",
-              description: `${errorMessage}`,
-              variant: "destructive",
-            });
-          }
-        );
+        if (err.response && err.response.data && err.response.data.errors) {
+          // Object Entries allow to display dynamic error message
+          Object.entries(err.response.data.errors).forEach(
+            ([errorName, errorMessage]) => {
+              toast({
+                title: "Signup Failed!",
+                description: `${errorMessage}`,
+                variant: "destructive",
+              });
+            }
+          );
+        } else {
+          toast({
+            title: "Signup Failed!",
+            description: "An unknown error occurred.",
+            variant: "destructive",
+          });
+        }
       }
     },
     async login(username: string, password: string) {
@@ -114,11 +123,13 @@ export const useAuthStore = defineStore("auth", {
           password: password,
         };
 
-        if (form.username === " " || form.password === " ") {
+        if (form.username.trim() === "" || form.password.trim() === "") {
           toast({
             title: "Empty Form",
             description: "Please fill in the username and password",
+            variant: "destructive",
           });
+          return;
         }
 
         const response = await axios.post("http://127.0.0.1:8000/api/login", {
@@ -137,17 +148,25 @@ export const useAuthStore = defineStore("auth", {
         this.isLoggedIn = true; // Update isLoggedIn state
         localStorage.setItem("token", JSON.stringify(this.token));
         router.push("/");
-      } catch (error) {
-        // Object Entries allow to display dynamic error message
-        Object.entries(err.response.data.errors).forEach(
-          ([errorName, errorMessage]) => {
-            toast({
-              title: "Login Failed!",
-              description: `${errorMessage}`,
-              variant: "destructive",
-            });
-          }
-        );
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.errors) {
+          // Object Entries allow to display dynamic error message
+          Object.entries(err.response.data.errors).forEach(
+            ([errorName, errorMessage]) => {
+              toast({
+                title: "Login Failed!",
+                description: `${errorMessage}`,
+                variant: "destructive",
+              });
+            }
+          );
+        } else {
+          toast({
+            title: "Login Failed!",
+            description: ".",
+            variant: "destructive",
+          });
+        }
       }
     },
     async fetchUser() {

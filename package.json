@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-vue": "^8.5.1",
+    "libphonenumber-js": "^1.11.17",
     "lucide-vue-next": "^0.468.0",
     "pinia": "^2.2.6",
     "radix-vue": "^1.9.11",
@@ -30,6 +31,8 @@
     "vee-validate": "^4.14.7",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
+    "vue-tel-input": "^9.3.0",
+    "vue3-tel-input": "^1.0.4",
     "zod": "^3.24.1"
   },
   "devDependencies": {

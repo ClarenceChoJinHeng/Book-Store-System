@@ -15,12 +15,12 @@ const hideAdmin = computed(() => route.meta.hideAdmin);
 
 <template>
   <div>
+    <Toaster />
     <AdminSidebar v-if="hideAdmin" />
     <div v-else class="flex flex-col min-h-ch100vh">
       <Navbar v-if="!hideHeader" />
       <div class="">
         <RouterView />
-        <Toaster />
       </div>
       <Footer v-if="showFooter" />
     </div>

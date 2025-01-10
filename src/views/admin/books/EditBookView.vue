@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { bookStore } from "@/stores/book.ts";
 import { Button } from "@/components/ui/button";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Textarea } from "@/components/ui/textarea";
+import { useRoute } from "vue-router";
+import { bookStore } from "@/stores/book";
 
-const book = bookStore();
+const route = useRoute();
+const bookId = route.params.id;
+const bookData = bookStore();
 
 const data = ref({
+  id:Number(bookId),
   isbn: "",
   title: "",
   author: "",
@@ -26,6 +30,28 @@ const data = ref({
   status: "",
   bookImage: "",
 });
+
+// Fetch author data when the component is mounted
+onMounted(async () => {
+  let respond = await bookData.getBookById(Number(bookId)); // Assuming you have a method to fetch the author by ID
+
+  data.value.isbn = bookData.book.isbn;
+  data.value.title = bookData.book.title;
+  data.value.author = bookData.book.author;
+  data.value.publisher = bookData.book.publisher;
+  data.value.publicationDate = bookData.book.publicationDate;
+  data.value.edition = bookData.book.edition;
+  data.value.language = bookData.book.language;
+  data.value.genre = bookData.book.genre;
+  data.value.category = bookData.book.category;
+  data.value.stockQuantity = bookData.book.stockQuantity;
+  data.value.price = bookData.book.price;
+  data.value.description = bookData.book.description;
+  data.value.ratingsReview = bookData.book.ratingsReview;
+  data.value.downloadLink = bookData.book.downloadLink;
+  data.value.status = bookData.book.status;
+  data.value.bookImage = bookData.book.bookImage;
+});
 </script>
 
 <template>
@@ -35,7 +61,7 @@ const data = ref({
     >
       <!-- Book List -->
       <div class="container flex flex-col">
-        <h1 class="font-bold text-2xl">Add Book</h1>
+        <h1 class="font-bold text-2xl">Edit Book</h1>
         <div class="flex flex-col gap-2 my-3">
           <div>
             <Label for="isbn" class="text-base">ISBN</Label>
@@ -187,7 +213,8 @@ const data = ref({
           <Button
             variant="green"
             @click="
-              book.addBooks(
+              bookData.editBooks(
+                data.id,
                 data.isbn,
                 data.title,
                 data.author,
