@@ -25,7 +25,7 @@ const tableTitle = [
   "Book Image",
 ];
 
-const showDeleteModal = ref(false);
+const showDeleteModal = ref("");
 </script>
 
 <template>
@@ -83,15 +83,22 @@ const showDeleteModal = ref(false);
               {{ book.price }}
             </td>
             <td
-              class="px-5 py-5 border-gray-200 text-sm max-h-96 border-2 max-w-96"
+              class="px-5 py-5 border-gray-200 text-sm max-h-52 border-2 max-w-mw30r"
             >
-              <p class="overflow-auto border-gray-200 max-h-96">
+              <p
+                class="overflow-auto border-gray-200 break-words w-rem20 max-h-52"
+              >
                 {{ book.description }}
               </p>
             </td>
-            <td class="px-5 py-5 border-2 border-gray-200 text-sm">
-              {{ book.ratingsReview }}
+            <td
+              class="px-5 py-5 border-gray-200 text-sm max-h-52 border-2 max-w-mw30r"
+            >
+              <p class="overflow-auto border-gray-200 w-rem30 max-h-52">
+                {{ book.ratingsReview }}
+              </p>
             </td>
+
             <td class="px-5 py-5 border-2 border-gray-200 text-sm">
               {{ book.status }}
             </td>
@@ -105,7 +112,7 @@ const showDeleteModal = ref(false);
                 </RouterLink>
                 <i
                   class="fas fa-trash cursor-pointer"
-                  @click="showDeleteModal = true"
+                  @click="showDeleteModal = book.id"
                 ></i>
               </div>
             </td>
@@ -113,7 +120,7 @@ const showDeleteModal = ref(false);
 
             <div
               class="h-full w-full absolute -translate-x-2/4 -translate-y-2/4 top-1/2 left-1/2"
-              v-if="showDeleteModal"
+              v-if="showDeleteModal === book.id"
             >
               <div
                 class="h-full w-full bg-slate-300 opacity-40 absolute -translate-x-2/4 -translate-y-2/4 top-1/2 left-1/2"
@@ -138,12 +145,12 @@ const showDeleteModal = ref(false);
                     @click="
                       () => {
                         bookData.deleteBook(book.id);
-                        showDeleteModal = false;
+                        showDeleteModal = '';
                       }
                     "
                     >Confirm
                   </Button>
-                  <Button variant="red" @click="showDeleteModal = false"
+                  <Button variant="red" @click="showDeleteModal = ''"
                     >Cancel
                   </Button>
                 </div>
@@ -155,7 +162,7 @@ const showDeleteModal = ref(false);
               colspan="6"
               class="px-5 py-5 border-b border-gray-200 text-sm text-center"
             >
-              No authors available.
+              No books available.
             </td>
           </tr>
         </tbody>

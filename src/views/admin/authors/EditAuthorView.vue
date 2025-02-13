@@ -13,24 +13,24 @@ const authors = useAuthorStore();
 
 const data = ref({
   id: Number(authorId),
-  name: "",
+  firstName: "",
+  lastName: "",
   penName: "",
-  phoneNumber: "",
-  age: 0,
-  religion: "",
   biography: "",
+  age: 0,
+  country: "",
 });
 
 // Fetch author data when the component is mounted
 onMounted(async () => {
   let respond = await authors.getAuthorById(Number(authorId)); // Assuming you have a method to fetch the author by ID
 
-  data.value.name = authors.author.name;
+  data.value.firstName = authors.author.firstName;
+  data.value.lastName = authors.author.lastName;
   data.value.penName = authors.author.penName;
-  data.value.phoneNumber = authors.author.phoneNumber;
-  data.value.age = authors.author.age;
-  data.value.religion = authors.author.religion;
   data.value.biography = authors.author.biography;
+  data.value.age = authors.author.age;
+  data.value.country = authors.author.country;
 });
 </script>
 
@@ -44,12 +44,21 @@ onMounted(async () => {
         <h1 class="font-bold text-2xl">Edit Author</h1>
         <div class="flex flex-col gap-2 my-3">
           <div>
-            <Label for="Name" class="text-base">Name</Label>
+            <Label for="firstName" class="text-base">First Name:</Label>
             <Input
-              id="Name"
+              id="firstName"
               type="text"
-              v-model="data.name"
-              placeholder="Author Name"
+              v-model="data.firstName"
+              placeholder="First Name"
+            />
+          </div>
+          <div>
+            <Label for="lastName" class="text-base">Last Name:</Label>
+            <Input
+              id="lastName"
+              type="text"
+              v-model="data.lastName"
+              placeholder="Last Name"
             />
           </div>
           <div>
@@ -62,33 +71,6 @@ onMounted(async () => {
             />
           </div>
           <div>
-            <Label for="phoneNumber" class="text-base">Phone Number:</Label>
-            <Input
-              id="phoneNumber"
-              type="text"
-              v-model="data.phoneNumber"
-              placeholder="Phone Number:"
-            />
-          </div>
-          <div>
-            <Label for="age" class="text-base">Age:</Label>
-            <Input
-              id="age"
-              type="number"
-              v-model="data.age"
-              placeholder="Age"
-            />
-          </div>
-          <div>
-            <Label for="religion" class="text-base">Religion:</Label>
-            <Input
-              id="religion"
-              type="text"
-              v-model="data.religion"
-              placeholder="Religion"
-            />
-          </div>
-          <div>
             <Label for="biography" class="text-base">Biography:</Label>
             <Textarea
               id="biography"
@@ -98,6 +80,19 @@ onMounted(async () => {
               class="h-60 resize-none overflow-y-auto"
             />
           </div>
+          <div>
+            <Label for="age" class="text-base">Age:</Label>
+            <Input id="age" type="text" v-model="data.age" placeholder="Age" />
+          </div>
+          <div>
+            <Label for="country" class="text-base">Country:</Label>
+            <Input
+              id="country"
+              type="text"
+              v-model="data.country"
+              placeholder="Country"
+            />
+          </div>
         </div>
         <div class="w-full flex justify-end gap-2">
           <Button
@@ -105,12 +100,12 @@ onMounted(async () => {
             @click="
               authors.editAuthor(
                 data.id,
-                data.name,
+                data.firstName,
+                data.lastName,
                 data.penName,
-                data.phoneNumber,
+                data.biography,
                 data.age,
-                data.religion,
-                data.biography
+                data.country
               )
             "
             >Confirm</Button

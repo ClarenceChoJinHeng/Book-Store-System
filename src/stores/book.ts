@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import { useToast } from "@/components/ui/toast/use-toast";
 import axios from "axios";
-import { CounterClockwiseClockIcon } from "@radix-icons/vue";
-import { ErrorMessage } from "vee-validate";
+import { useAdminStore } from "@/stores/admin";
+
 const { toast } = useToast();
 import router from "../router";
 
 export const bookStore = defineStore("bookStore", {
   state: () => ({
-    books: [] as any[],
-    book: [] as any[],
+    books: JSON.parse(localStorage.getItem("books") || "[]"),
+    book: JSON.parse(localStorage.getItem("book") || "{}"),
   }),
 
   actions: {
     async addBooks(
       isbn: string,
       title: string,
-      author: string,
+      author: string[],
       publisher: string,
       publicationDate: string,
       edition: string,
@@ -31,14 +31,12 @@ export const bookStore = defineStore("bookStore", {
       bookImage: string
     ) {
       try {
-        const isbnRegex = /^\d{10,13}$/;
         if (
           isbn === "" ||
           title === "" ||
-          author === "" ||
+          author.length === 0 ||
           publisher === "" ||
           publicationDate === "" ||
-          edition === "" ||
           language === "" ||
           genre === "" ||
           category === "" ||
@@ -56,6 +54,8 @@ export const bookStore = defineStore("bookStore", {
           });
           return;
         }
+
+        console.log(author);
 
         if (isNaN(stockQuantity) || isNaN(price)) {
           toast({
@@ -86,19 +86,21 @@ export const bookStore = defineStore("bookStore", {
           return;
         }
 
-        if (!isbnRegex.test(isbn)) {
-          toast({
-            title: "ISBN format error!!",
-            description: "ISBN must be 10 to 13 numeric digits only!",
-            variant: "destructive",
-          });
-          return;
-        }
+        console.log("Author array:", author);
+
+        const authorObject = author[0];
+        console.log("Parsed author:", authorObject);
+
+        const authorId = Number(authorObject.id);
+        console.log("Author ID:", authorId);
+
+        const authorName = authorObject.firstName + " " + authorObject.lastName;
+        console.log("Author Name:", authorName);
 
         const form = {
           isbn: isbn,
           title: title,
-          author: author,
+          author: authorName,
           publisher: publisher,
           publicationDate: publicationDate,
           edition: edition,
@@ -111,7 +113,12 @@ export const bookStore = defineStore("bookStore", {
           ratingsReview: ratingsReview,
           status: status,
           bookImage: bookImage,
+          authorId: authorId,
         };
+
+        this.books.push(form);
+        localStorage.setItem("books", JSON.stringify(this.books));
+
         const response = await axios.post("http://127.0.0.1:8000/api/addBook", {
           ...form,
         });
@@ -123,6 +130,14 @@ export const bookStore = defineStore("bookStore", {
           });
         }
         await this.getBook();
+        const useAdmin = useAdminStore();
+        console.log(useAdmin.admin.id);
+        if (useAdmin.admin && useAdmin.admin.id) {
+          console.log(useAdmin.admin.id);
+          await useAdmin.adminAuditLog(useAdmin.admin.id, "Add", "Book");
+        } else {
+          console.error("Admin data is not available or admin.id is missing");
+        }
         router.push("/admin/book/book-manage");
       } catch (err) {
         if (err.response && err.response.data && err.response.data.errors) {
@@ -145,6 +160,7 @@ export const bookStore = defineStore("bookStore", {
         const response = await axios.get("http://127.0.0.1:8000/api/getBook");
         this.books = response.data;
         console.log(this.books);
+        localStorage.setItem("books", JSON.stringify(this.books));
 
         console.log("Succes retrieve", response.data);
       } catch (err) {
@@ -155,6 +171,9 @@ export const bookStore = defineStore("bookStore", {
     async getBookById(id: number) {
       try {
         console.log(id);
+        localStorage.removeItem("book");
+        this.book = {};
+
         const response = await axios.get(
           `http://127.0.0.1:8000/api/getBookById/${id}`
         );
@@ -162,6 +181,8 @@ export const bookStore = defineStore("bookStore", {
         console.log("Fetch single book successfull", response.data);
 
         this.book = response.data;
+        console.log(this.book);
+        localStorage.setItem("book", JSON.stringify(this.book));
 
         return true;
       } catch (err) {
@@ -192,10 +213,9 @@ export const bookStore = defineStore("bookStore", {
         if (
           isbn === "" ||
           title === "" ||
-          author === "" ||
+          author.length === 0 ||
           publisher === "" ||
           publicationDate === "" ||
-          edition === "" ||
           language === "" ||
           genre === "" ||
           category === "" ||
@@ -214,14 +234,36 @@ export const bookStore = defineStore("bookStore", {
           return;
         }
 
-        // if (!isbnRegex.test(isbn)) {
-        //   toast({
-        //     title: "ISBN format error!!",
-        //     description: "ISBN must be 10 to 13 numeric digits only!",
-        //     variant: "destructive",
-        //   });
-        //   return;
-        // }
+        console.log(author);
+
+        if (isNaN(stockQuantity) || isNaN(price)) {
+          toast({
+            title: "Input must be numeric!!",
+            description: "Stock Quantity or Price must be numeric!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!Number.isInteger(stockQuantity)) {
+          toast({
+            title: "Stock Quantity cannot be decimals!!",
+            description: "Ensure stock quantity is integer!!",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const priceRegex = /^\d+(\.\d{1,2})?$/;
+        if (!priceRegex.test(price.toString())) {
+          toast({
+            title: "Price format error!!",
+            description:
+              "Price must be a number with up to two decimal places!!",
+            variant: "destructive",
+          });
+          return;
+        }
 
         const form = {
           isbn: isbn,
@@ -254,8 +296,12 @@ export const bookStore = defineStore("bookStore", {
           });
           return;
         }
-        router.push("/admin/book/book-manage
+        router.push("/admin/book/book-manage");
         await this.getBook();
+        const useAdmin = useAdminStore();
+        if (useAdmin.admin) {
+          await useAdmin.adminAuditLog(useAdmin.admin.id, "Edit", "Book");
+        }
       } catch (err) {
         if (err.response && err.response.data && err.response.data.errors) {
           console.error("An Error has Occured", err);
@@ -285,6 +331,10 @@ export const bookStore = defineStore("bookStore", {
         });
 
         await this.getBook();
+        const useAdmin = useAdminStore();
+        if (useAdmin.admin) {
+          await useAdmin.adminAuditLog(useAdmin.admin.id, "Delete", "Book");
+        }
       } catch (err) {
         console.error("Unexpected error", err);
       }

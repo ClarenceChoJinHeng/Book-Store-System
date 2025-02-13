@@ -9,12 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 const authors = useAuthorStore();
 
 const data = ref({
-  name: "",
+  firstName: "",
+  lastName: "",
   penName: "",
-  phoneNumber: "",
-  age: 0,
-  religion: "",
   biography: "",
+  age: 0,
+  country: "",
 });
 </script>
 
@@ -28,12 +28,21 @@ const data = ref({
         <h1 class="font-bold text-2xl">Add Author</h1>
         <div class="flex flex-col gap-2 my-3">
           <div>
-            <Label for="Name" class="text-base">Name</Label>
+            <Label for="firstName" class="text-base">First Name:</Label>
             <Input
-              id="Name"
+              id="firstName"
               type="text"
-              v-model="data.name"
-              placeholder="Author Name"
+              v-model="data.firstName"
+              placeholder="First Name"
+            />
+          </div>
+          <div>
+            <Label for="lastName" class="text-base">Last Name:</Label>
+            <Input
+              id="lastName"
+              type="text"
+              v-model="data.lastName"
+              placeholder="Last Name"
             />
           </div>
           <div>
@@ -46,15 +55,6 @@ const data = ref({
             />
           </div>
           <div>
-            <Label for="phoneNumber" class="text-base">Phone Number:</Label>
-            <Input
-              id="phoneNumber"
-              type="text"
-              v-model="data.phoneNumber"
-              placeholder="Phone Number:"
-            />
-          </div>
-          <div>
             <Label for="age" class="text-base">Age:</Label>
             <Input
               id="age"
@@ -64,12 +64,12 @@ const data = ref({
             />
           </div>
           <div>
-            <Label for="religion" class="text-base">Religion:</Label>
+            <Label for="country" class="text-base">Country:</Label>
             <Input
-              id="religion"
+              id="country"
               type="text"
-              v-model="data.religion"
-              placeholder="Religion"
+              v-model="data.country"
+              placeholder="Country"
             />
           </div>
           <div>
@@ -88,12 +88,12 @@ const data = ref({
             variant="green"
             @click="
               authors.addAuthor(
-                data.name,
+                data.firstName,
+                data.lastName,
                 data.penName,
-                data.phoneNumber,
+                data.biography,
                 data.age,
-                data.religion,
-                data.biography
+                data.country
               )
             "
             >Confirm</Button

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from "vue-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAdminStore } from "@/stores/admin.ts";
+import { Button } from "@/components/ui/button";
+
+const admin = useAdminStore();
 
 const route = useRoute();
 </script>
@@ -62,6 +66,9 @@ const route = useRoute();
             <i class="fas fa-user mr-3"></i>
             User Management
           </RouterLink>
+        </div>
+        <div class="flex items-end justify-center h-ch30r">
+          <Button @click="admin.adminLogout()" variant="red">Logout</Button>
         </div>
       </nav>
     </div>

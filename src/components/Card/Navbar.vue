@@ -50,14 +50,14 @@ const route = useRoute();
             </li>
             <li>
               <RouterLink
-                to="/Book"
+                to="/book"
                 class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
-                >Shop</RouterLink
+                >Books</RouterLink
               >
             </li>
             <li>
               <RouterLink
-                to="/About"
+                to="/about"
                 class="inline-block no-underline hover:text-black hover:underline py-2 px-4"
                 href="#"
                 >About</RouterLink

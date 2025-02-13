@@ -8,19 +8,19 @@ const authors = computed(() => authorStore.authors);
 
 const tableTitles = [
   "ID",
-  "Name",
+  "First Name",
+  "Last Name",
   "Pen Name",
-  "Phone Number",
   "Age",
-  "Religion",
+  "Country",
   "Biography",
 ];
 
-const showDeleteModal = ref(false);
+const showDeleteModal = ref("");
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto h-full">
     <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
       <table class="min-w-full leading-normal">
         <thead>
@@ -45,19 +45,19 @@ const showDeleteModal = ref(false);
               {{ author.id }}
             </td>
             <td class="px-5 py-5 border-2 border-gray-200 text-sm">
-              {{ author.name }}
+              {{ author.firstName }}
+            </td>
+            <td class="px-5 py-5 border-2 border-gray-200 text-sm">
+              {{ author.lastName }}
             </td>
             <td class="px-5 py-5 border-2 border-gray-200 text-sm">
               {{ author.penName }}
             </td>
             <td class="px-5 py-5 border-2 border-gray-200 text-sm">
-              {{ author.phoneNumber }}
-            </td>
-            <td class="px-5 py-5 border-2 border-gray-200 text-sm">
               {{ author.age }}
             </td>
             <td class="px-5 py-5 border-2 border-gray-200 text-sm">
-              {{ author.religion }}
+              {{ author.country }}
             </td>
             <td
               class="px-5 py-5 border-gray-200 text-sm max-h-96 border-2 max-w-96"
@@ -66,6 +66,7 @@ const showDeleteModal = ref(false);
                 {{ author.biography }}
               </p>
             </td>
+
             <td class="px-5 py-5 border-b border-gray-200 text-sm">
               <div class="flex items-center gap-2">
                 <RouterLink :to="`/admin/author/edit-author/${author.id}`">
@@ -73,7 +74,7 @@ const showDeleteModal = ref(false);
                 </RouterLink>
                 <i
                   class="fas fa-trash cursor-pointer"
-                  @click="showDeleteModal = true"
+                  @click="showDeleteModal = author.id"
                 ></i>
               </div>
             </td>
@@ -81,7 +82,7 @@ const showDeleteModal = ref(false);
 
             <div
               class="h-full w-full absolute -translate-x-2/4 -translate-y-2/4 top-1/2 left-1/2"
-              v-if="showDeleteModal"
+              v-if="showDeleteModal === author.id "
             >
               <div
                 class="h-full w-full bg-slate-300 opacity-40 absolute -translate-x-2/4 -translate-y-2/4 top-1/2 left-1/2"
@@ -104,17 +105,17 @@ const showDeleteModal = ref(false);
                     @click="
                       () => {
                         authorStore.deleteAuthor(author.id);
-                        showDeleteModal = false;
+                        showDeleteModal = '';
                       }
                     "
                     >Confirm
                   </Button>
-                  <Button variant="red" @click="showDeleteModal = false"
+                  <Button variant="red" @click="showDeleteModal = ''"
                     >Cancel
                   </Button>
                 </div>
               </div>
-            </div>
+            </div>  
           </tr>
           <tr v-else>
             <td

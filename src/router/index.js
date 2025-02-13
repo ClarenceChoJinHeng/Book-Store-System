@@ -1,18 +1,24 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import LoginView from "../views/LoginView.vue";
-import SignupView from "../views/SignupView.vue";
-import ProfileView from "../views/ProfileView.vue";
-import AboutView from "../views/AboutView.vue";
-import BookView from "../views/BookView.vue";
-import DashboardView from "../views/admin/DashboardView.vue";
-import AuthorView from "@/views/admin/authors/AuthorView.vue";
+import HomeView from "@/views/HomeView.vue";
+import LoginView from "@/views/LoginView.vue";
+import SignupView from "@/views/SignupView.vue";
+import ProfileView from "@/views/ProfileView.vue";
+import AboutView from "@/views/AboutView.vue";
+import BookView from "@/views/BookView.vue";
+import SingleBookView from "@/views/SingleBookView.vue";
+import ShoppingCartView from "@/views/ShoppingCartView.vue";
+import DashboardView from "@/views/admin/DashboardView.vue";
 import BookManagement from "@/views/admin/books/BookView.vue";
-import UsersManagement from "@/views/admin/UsersView.vue";
 import AddBookView from "@/views/admin/books/AddBookView.vue";
-import AddAuthorView from "@/views/admin/authors/AddAuthorView.vue";
-import EditAuthorView from "@/views/admin/authors/EditAuthorView.vue";
 import EditBookView from "@/views/admin/books/EditBookView.vue";
+import AuthorView from "@/views/admin/authors/AuthorView.vue";
+import AddAuthorView from "@/views/admin/authors/AddAuthorView.vue";
+import UsersManagement from "@/views/admin/UsersView.vue";
+import EditAuthorView from "@/views/admin/authors/EditAuthorView.vue";
+import AdminRegisterView from "@/views/admin/AdminRegisterView.vue";
+import AdminLoginView from "@/views/admin/AdminLoginView.vue";
+import { useAdminStore } from "@/stores/admin";
+import { useAuthStore } from "@/stores/authStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +32,7 @@ const router = createRouter({
         hideHeader: true,
         hideFooter: false,
         hideAdmin: false,
-        requiresAuth: true,
+        requiresAuth: false,
       },
     },
     {
@@ -38,7 +44,8 @@ const router = createRouter({
         hideHeader: true,
         hideFooter: true,
         hideAdmin: false,
-        requiresAuth: true,
+        guestOnly: true,
+        requiresAuth: false,
       },
     },
     {
@@ -48,18 +55,9 @@ const router = createRouter({
       meta: {
         title: "The Book - Sign Up",
         hideFooter: true,
+        requiresAuth: false,
         hideHeader: true,
-        hideAdmin: false,
-      },
-    },
-    {
-      path: "/sellerPage",
-      name: "Seller Page Login",
-      component: SignupView,
-      meta: {
-        title: "The Book - Seller Page Login",
-        hideFooter: true,
-        hideHeader: true,
+        guestOnly: true,
         hideAdmin: false,
       },
     },
@@ -76,18 +74,6 @@ const router = createRouter({
       },
     },
     {
-      path: "/about",
-      name: "About",
-      component: AboutView,
-      meta: {
-        title: "The Book - About",
-        hideFooter: true,
-        hideAdmin: false,
-        requiresAuth: true,
-        hideHeader: true,
-      },
-    },
-    {
       path: "/book",
       name: "Book",
       component: BookView,
@@ -95,8 +81,71 @@ const router = createRouter({
         title: "The Book - Book Section",
         hideFooter: true,
         hideAdmin: false,
-        requiresAuth: true,
+        requiresAuth: false,
         hideHeader: true,
+      },
+    },
+    {
+      path: "/singleBook/:id",
+      name: "SingleBook",
+      component: SingleBookView,
+      meta: {
+        title: "The Book - Single Book Section",
+        hideFooter: true,
+        hideAdmin: false,
+        requiresAuth: false,
+        hideHeader: true,
+      },
+    },
+    {
+      path: "/shoppingCart/:id",
+      name: "ShoppingCart",
+      component: ShoppingCartView,
+      meta: {
+        title: "The Book - Shopping Cart",
+        hideFooter: true,
+        hideAdmin: false,
+        requiresAuth: false,
+        hideHeader: true,
+      },
+    },
+    {
+      path: "/about",
+      name: "About",
+      component: AboutView,
+      meta: {
+        title: "The Book - About",
+        hideFooter: true,
+        hideAdmin: false,
+        requiresAuth: false,
+        hideHeader: true,
+      },
+    },
+
+    {
+      path: "/admin/register",
+      name: "AdminRegisterView",
+      component: AdminRegisterView,
+      meta: {
+        title: "The Book [Admin] - Register",
+        hideHeader: false,
+        hideAdmin: false,
+        hideFooter: true,
+        adminOnly: true,
+        requiresAdminAuth: true,
+      },
+    },
+    {
+      path: "/admin/login",
+      name: "AdminLoginView",
+      component: AdminLoginView,
+      meta: {
+        title: "The Book [Admin] - Login",
+        hideHeader: false,
+        hideAdmin: false,
+        hideFooter: true,
+        adminOnly: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -107,8 +156,8 @@ const router = createRouter({
         title: "The Book [Admin] - Dashboard",
         hideHeader: true,
         hideAdmin: true,
+        requiresAdminAuth: true,
         hideFooter: true,
-        requiresAuth: true,
       },
     },
     {
@@ -120,7 +169,6 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
       },
     },
     {
@@ -132,7 +180,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -144,7 +192,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -156,7 +204,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -168,7 +216,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -180,7 +228,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
     {
@@ -192,7 +240,7 @@ const router = createRouter({
         hideAdmin: true,
         hideHeader: true,
         hideFooter: true,
-        requiresAuth: true,
+        requiresAdminAuth: true,
       },
     },
   ],
@@ -200,7 +248,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || "Default Title";
-  next();
+  // console.log(to);
+  // console.log(useAuthStore().isAuthenticated);
+  if (to.meta.requiresAdminAuth && !useAdminStore().isAuthenticated) {
+    next({ path: "/admin/login" });
+  } else if (to.meta.adminOnly && useAuthStore().isAuthenticated) {
+    next({ path: "/admin/dashboard" });
+  } else if (to.meta.requiresAuth && !useAuthStore().isAuthenticated) {
+    next({ path: "/login" });
+  } else if (to.meta.guestOnly && useAuthStore().isAuthenticated) {
+    next({ path: "/" });
+  } else {
+    next();
+  }
 });
 
 export default router;

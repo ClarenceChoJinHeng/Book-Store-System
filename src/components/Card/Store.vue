@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import BookItem from "./BookItem.vue";
 import BookHolder from "./BookHolder.vue";
 import IconArrow from "@/components/icons/IconArrow.vue";
-
-import { Card, CardContent } from "@/components/ui/Card";
+import { bookStore } from "@/stores/book";
+import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
 import {
   Carousel,
   CarouselContent,
@@ -12,13 +12,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-import { bookStore } from "@/stores/book.ts";
-import { useRouter } from "vue-router";
-import { ref, computed } from "vue";
-
-const store = bookStore();
-const books = store.books;
-const filteredBooks = computed(() => store.filteredBooks);
+const book = bookStore();
+const selectedCategory = ref("Fiction");
+const books = computed(() => book.books);
+const filteredBooks = computed(() => {
+  return book.books.filter((b) => b.category === selectedCategory.value);
+});
 </script>
 <template>
   <section class="bg-white py-8 flex justify-center">
@@ -64,9 +63,9 @@ const filteredBooks = computed(() => store.filteredBooks);
         >
           <CarouselContent>
             <BookHolder
-              v-for="(book, index) in books"
-              :key="index"
-              :imageUrl="book.imageUrl"
+              v-for="book in books"
+              :key="book.id"
+              :imageUrl="book.bookImage"
               :title="book.title"
               :author="book.author"
               :price="book.price"
@@ -98,7 +97,7 @@ const filteredBooks = computed(() => store.filteredBooks);
 
               <div>
                 <RouterLink
-                  to="/BuyBooks"
+                  to="/books"
                   class="flex items-center justify-center gap-2"
                   >See More <IconArrow
                 /></RouterLink>
@@ -115,12 +114,11 @@ const filteredBooks = computed(() => store.filteredBooks);
             align: 'start',
           }"
         >
-          <!-- Only display Romance and Historical Ficton -->
           <CarouselContent>
             <BookHolder
               v-for="(book, index) in filteredBooks"
               :key="index"
-              :imageUrl="book.imageUrl"
+              :imageUrl="book.bookImage"
               :author="book.author"
               :title="book.title"
               :price="book.price"
@@ -173,7 +171,7 @@ const filteredBooks = computed(() => store.filteredBooks);
             <BookHolder
               v-for="(book, index) in books"
               :key="index"
-              :imageUrl="book.imageUrl"
+              :imageUrl="book.bookImage"
               :author="book.author"
               :title="book.title"
               :price="book.price"

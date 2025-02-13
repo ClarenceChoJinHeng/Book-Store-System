@@ -2,16 +2,30 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { bookStore } from "@/stores/book.ts";
+import { useAuthorStore } from "@/stores/author.ts";
 import { Button } from "@/components/ui/button";
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { stringifyQuery } from "vue-router";
 
 const book = bookStore();
+const useAuthor = useAuthorStore();
+
+const authors = computed(() => useAuthor.authors);
 
 const data = ref({
   isbn: "",
   title: "",
-  author: "",
+  author: [],
   publisher: "",
   publicationDate: "",
   edition: "",
@@ -25,6 +39,22 @@ const data = ref({
   downloadLink: "",
   status: "",
   bookImage: "",
+});
+
+const selectedAuthor = ref(null);
+
+watch(selectedAuthor, (newAuthor) => {
+  if (newAuthor) {
+    try {
+      const [id, firstName, lastName] = JSON.parse(newAuthor);
+      data.value.author = [{ id, firstName, lastName }];
+    } catch (e) {
+      console.error("Failed to parse author:", e);
+      data.value.author = [];
+    }
+  } else {
+    data.value.author = [];
+  }
 });
 </script>
 
@@ -43,7 +73,7 @@ const data = ref({
               id="isbn"
               v-model="data.isbn"
               type="text"
-              placeholder=" ISBN"
+              placeholder="000-0000000000"
             />
           </div>
           <div>
@@ -57,12 +87,30 @@ const data = ref({
           </div>
           <div>
             <Label for="author" class="text-base">Author</Label>
-            <Input
-              id="author"
-              v-model="data.author"
-              type="text"
-              placeholder=" Author"
-            />
+            <div class="w-full flex">
+              <Select v-model="selectedAuthor" class="w-max">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="Select Author" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      v-for="author in authors"
+                      :key="author.id"
+                      :value="
+                        JSON.stringify([
+                          author.id.toString(),
+                          author.firstName,
+                          author.lastName,
+                        ])
+                      "
+                    >
+                      {{ author.firstName + " " + author.lastName }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
             <Label for="publisher" class="text-base">Publisher</Label>
@@ -149,29 +197,35 @@ const data = ref({
               v-model="data.description"
               type="text"
               placeholder="Provide Book Description"
-              class="h-60 resize-none overflow-y-auto"
+              class="h-40 resize-none overflow-y-auto"
             />
           </div>
           <div>
-            <Label for="ratingsReview" class="text-base">
-              Ratings/Review
-            </Label>
-            <Input
+            <Label for="ratingsReview" class="text-base"> Ratings/Review </Label
+            ><Textarea
               id="ratingsReview"
-              type="text"
               v-model="data.ratingsReview"
+              type="text"
               placeholder="Ratings/Review"
+              class="h-40 resize-none overflow-y-auto"
             />
           </div>
 
           <div>
             <Label for="status" class="text-base"> Book Status </Label>
-            <Input
-              id="status"
-              type="text"
-              v-model="data.status"
-              placeholder="Book Status (e.g. No Stock)"
-            />
+            <div class="w-full flex">
+              <Select v-model="data.status" class="w-max">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="Select Status " />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="In Stock">In Stock </SelectItem>
+                    <SelectItem value="No Stock">No Stock </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
             <Label for="bookImage" class="text-base"> Book Image </Label>
@@ -179,7 +233,7 @@ const data = ref({
               id="bookImage"
               v-model="data.bookImage"
               type="string"
-              placeholder="Image"
+              placeholder="Image Link"
             />
           </div>
         </div>

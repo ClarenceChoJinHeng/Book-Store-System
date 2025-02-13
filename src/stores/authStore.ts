@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { useToast } from "@/components/ui/toast/use-toast";
 import router from "../router";
+import { ErrorMessage } from "vee-validate";
 const { toast } = useToast();
 
 export const useAuthStore = defineStore("auth", {
@@ -90,8 +91,7 @@ export const useAuthStore = defineStore("auth", {
           title: "Signup Successful!",
           description: "Enjoy your new account!",
         });
-        //  = { username: "", email: "", password: "" };
-        // Reroute to login page
+
         router.push("/Login");
       } catch (err) {
         // Object Entries allow to display dynamic error message
@@ -149,21 +149,34 @@ export const useAuthStore = defineStore("auth", {
         localStorage.setItem("token", JSON.stringify(this.token));
         router.push("/");
       } catch (err) {
-        if (err.response && err.response.data && err.response.data.errors) {
-          // Object Entries allow to display dynamic error message
-          Object.entries(err.response.data.errors).forEach(
-            ([errorName, errorMessage]) => {
-              toast({
-                title: "Login Failed!",
-                description: `${errorMessage}`,
-                variant: "destructive",
-              });
-            }
-          );
+        if (err.response && err.response.data) {
+          console.log("Error response data:", err.response.data);
+
+          if (err.response.data.errors) {
+            // Object Entries allow to display dynamic error message
+            Object.entries(err.response.data.errors).forEach(
+              ([errorName, errorMessage]) => {
+                console.log(`Error at ${errorName}: ${errorMessage}`);
+                toast({
+                  title: "Login Failed!",
+                  description: `${errorMessage}`,
+                  variant: "destructive",
+                });
+              }
+            );
+          } else {
+            console.error("err.response.data.errors is not defined");
+            toast({
+              title: "Login Failed!",
+              description: "An unexpected error occurred.",
+              variant: "destructive",
+            });
+          }
         } else {
+          console.error("err.response or err.response.data is undefined");
           toast({
             title: "Login Failed!",
-            description: ".",
+            description: "An unexpected error occurred.",
             variant: "destructive",
           });
         }

@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Autoplay } from "swiper/modules";
 import { RouterLink } from "vue-router";
-
+import { ReloadIcon } from "@radix-icons/vue";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
@@ -34,6 +34,8 @@ const data = ref({
   username: "",
   password: "",
 });
+
+let loginButton = ref(true);
 </script>
 
 <template>
@@ -126,10 +128,15 @@ const data = ref({
           <div class="flex flex-col gap-4 h-max mt-3">
             <div class="flex items-center gap-10">
               <Button
+                v-if="loginButton"
                 type="submit"
                 @click="authStore.login(data.username, data.password)"
                 >Login</Button
               >
+              <Button disabled v-else>
+                <ReloadIcon class="w-4 h-4 mr-2 animate-spin" />
+                Please wait
+              </Button>
               <div class="flex flex-col items-center">
                 <RouterLink to="/forgotpassword">
                   <span

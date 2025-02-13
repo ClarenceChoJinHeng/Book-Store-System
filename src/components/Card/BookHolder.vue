@@ -12,7 +12,7 @@ defineProps({
   imageUrl: String,
   title: String,
   author: String,
-  price: String,
+  price: Number,
 });
 </script>
 
@@ -41,7 +41,7 @@ defineProps({
                     {{ author }}
                   </p>
                 </div>
-                <p class="pt-1 text-gray-900">{{ price }}</p>
+                <p class="pt-1 text-gray-900">RM {{ price }}</p>
               </div>
             </div>
           </div>
